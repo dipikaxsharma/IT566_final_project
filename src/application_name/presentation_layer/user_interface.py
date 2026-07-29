@@ -4,6 +4,7 @@ from application_name.application_base import ApplicationBase
 from application_name.service_layer.app_services import AppServices
 import inspect
 import json
+from datetime import date
 
 class UserInterface(ApplicationBase):
     """UserInterface Class Definition."""
@@ -71,8 +72,25 @@ class UserInterface(ApplicationBase):
             print(f'\t{c}')
 
     def add_campaign(self):
-        """Stub: will prompt for and add a new campaign."""
-        print('add_campaign() called...')
+        """Prompt for and add a new campaign."""
+        print('\n\t--- Add Campaign ---')
+        name = input('\tCampaign name: ')
+        company = input('\tCompany: ')
+        try:
+            budget = float(input('\tBudget: '))
+        except Exception:
+            print('\tInvalid budget entered, defaulting to 0.0.')
+            budget = 0.0
+        status = input('\tStatus (active/paused/ended) [active]: ') or 'active'
+        start_date_str = input('\tStart date (YYYY-MM-DD), or leave blank: ')
+        end_date_str = input('\tEnd date (YYYY-MM-DD), or leave blank: ')
+        start_date = date.fromisoformat(start_date_str) if start_date_str else None
+        end_date = date.fromisoformat(end_date_str) if end_date_str else None
+        new_id = self.DB.create_campaign(name, company, budget, status, start_date, end_date)
+        if new_id:
+            print(f'\tCampaign added with campaign_id {new_id}.')
+        else:
+            print('\tSomething went wrong adding the campaign.')
 
     def view_channels(self):
         """Display all channels."""
