@@ -41,7 +41,24 @@ class MySQLPersistenceWrapper(ApplicationBase):
 
 	# MySQLPersistenceWrapper Methods
 
-
+	def get_all_campaigns(self)->list:
+		"""Queries the campaign table and returns all rows as a list of dictionaries."""
+		try:
+			self._logger.log_debug(f'{inspect.currentframe().f_code.co_name}: Fetching all campaigns...')
+			connection = self._connection_pool.get_connection()
+			cursor = connection.cursor(dictionary=True)
+			cursor.execute('SELECT * FROM campaign;')
+			rows = cursor.fetchall()
+			cursor.close()
+			connection.close()
+			self._logger.log_debug(f'{inspect.currentframe().f_code.co_name}: Retrieved {len(rows)} campaign(s).')
+			return rows
+		except connector.Error as err:
+			self._logger.log_error(f'{inspect.currentframe().f_code.co_name}: Problem fetching campaigns: {err}')
+			return []
+		except Exception as e:
+			self._logger.log_error(f'{inspect.currentframe().f_code.co_name}: Problem fetching campaigns: {e}')
+			return []
 
 
 
