@@ -62,6 +62,25 @@ class MySQLPersistenceWrapper(ApplicationBase):
 
 
 
+	def get_all_channels(self)->list:
+		"""Queries the channel table and returns all rows as a list of dictionaries."""
+		try:
+			self._logger.log_debug(f'{inspect.currentframe().f_code.co_name}: Fetching all channels...')
+			connection = self._connection_pool.get_connection()
+			cursor = connection.cursor(dictionary=True)
+			cursor.execute('SELECT * FROM channel;')
+			rows = cursor.fetchall()
+			cursor.close()
+			connection.close()
+			self._logger.log_debug(f'{inspect.currentframe().f_code.co_name}: Retrieved {len(rows)} channel(s).')
+			return rows
+		except connector.Error as err:
+			self._logger.log_error(f'{inspect.currentframe().f_code.co_name}: Problem fetching channels: {err}')
+			return []
+		except Exception as e:
+			self._logger.log_error(f'{inspect.currentframe().f_code.co_name}: Problem fetching channels: {e}')
+			return []
+
 		##### Private Utility Methods #####
 
 	def _initialize_database_connection_pool(self, config:dict)->MySQLConnectionPool:
