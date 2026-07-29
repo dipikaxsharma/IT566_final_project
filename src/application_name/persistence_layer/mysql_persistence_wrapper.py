@@ -127,6 +127,30 @@ class MySQLPersistenceWrapper(ApplicationBase):
 			self._logger.log_error(f'{inspect.currentframe().f_code.co_name}: Problem adding channel: {e}')
 			return None
 
+	def link_channel_to_campaign(self, campaign_id:int, channel_id:int,
+					spend:float=0.0, start_date=None)->int:
+		"""Links a channel to a campaign via campaign_channel_xref, returns the new xref_id."""
+		try:
+			self._logger.log_debug(f'{inspect.currentframe().f_code.co_name}: Linking campaign {campaign_id} to channel {channel_id}...')
+			connection = self._connection_pool.get_connection()
+			cursor = connection.cursor()
+			sql = ('INSERT INTO campaign_channel_xref (campaign_id, channel_id, spend, start_date) '
+				   'VALUES (%s, %s, %s, %s);')
+			values = (campaign_id, channel_id, spend, start_date)
+			cursor.execute(sql, values)
+			connection.commit()
+			new_id = cursor.lastrowid
+			cursor.close()
+			connection.close()
+			self._logger.log_debug(f'{inspect.currentframe().f_code.co_name}: Added xref_id {new_id}.')
+			return new_id
+		except connector.Error as err:
+			self._logger.log_error(f'{inspect.currentframe().f_code.co_name}: Problem linking channel to campaign: {err}')
+			return None
+		except Exception as e:
+			self._logger.log_error(f'{inspect.currentframe().f_code.co_name}: Problem linking channel to campaign: {e}')
+			return None
+
 		##### Private Utility Methods #####
 
 	def _initialize_database_connection_pool(self, config:dict)->MySQLConnectionPool:
