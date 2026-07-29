@@ -75,8 +75,14 @@ class UserInterface(ApplicationBase):
         print('add_campaign() called...')
 
     def view_channels(self):
-        """Stub: will display all channels."""
-        print('view_channels() called...')
+        """Display all channels."""
+        channels = self.DB.get_channels()
+        if not channels:
+            print('\n\tNo channels found.')
+            return
+        print(f'\n\t--- Channels ({len(channels)}) ---')
+        for ch in channels:
+            print(f'\t{ch}')
 
     def add_channel(self):
         """Stub: will prompt for and add a new channel."""
