@@ -45,3 +45,17 @@ class AppServices(ApplicationBase):
             )
             channels.append(ch)
         return channels
+
+    def create_campaign(self, name:str, company:str, budget:float=0.0,
+                         status:str='active', start_date=None, end_date=None)->int:
+        """Creates a new campaign in the database, returns the new campaign_id."""
+        return self.DB.add_campaign(name, company, budget, status, start_date, end_date)
+
+    def create_channel(self, name:str, type:str='other', status:str='active')->int:
+        """Creates a new channel in the database, returns the new channel_id."""
+        return self.DB.add_channel(name, type, status)
+
+    def link_campaign_channel(self, campaign_id:int, channel_id:int,
+                               spend:float=0.0, start_date=None)->int:
+        """Links a channel to a campaign with an allocated spend, returns the new xref_id."""
+        return self.DB.link_channel_to_campaign(campaign_id, channel_id, spend, start_date)
