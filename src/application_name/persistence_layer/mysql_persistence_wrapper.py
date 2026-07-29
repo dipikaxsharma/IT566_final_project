@@ -81,6 +81,30 @@ class MySQLPersistenceWrapper(ApplicationBase):
 			self._logger.log_error(f'{inspect.currentframe().f_code.co_name}: Problem fetching channels: {e}')
 			return []
 
+	def add_campaign(self, name:str, company:str, budget:float=0.0,
+					status:str='active', start_date=None, end_date=None)->int:
+		"""Inserts a new campaign row and returns the new campaign_id."""
+		try:
+			self._logger.log_debug(f'{inspect.currentframe().f_code.co_name}: Adding campaign {name}...')
+			connection = self._connection_pool.get_connection()
+			cursor = connection.cursor()
+			sql = ('INSERT INTO campaign (name, company, budget, status, start_date, end_date) '
+				   'VALUES (%s, %s, %s, %s, %s, %s);')
+			values = (name, company, budget, status, start_date, end_date)
+			cursor.execute(sql, values)
+			connection.commit()
+			new_id = cursor.lastrowid
+			cursor.close()
+			connection.close()
+			self._logger.log_debug(f'{inspect.currentframe().f_code.co_name}: Added campaign_id {new_id}.')
+			return new_id
+		except connector.Error as err:
+			self._logger.log_error(f'{inspect.currentframe().f_code.co_name}: Problem adding campaign: {err}')
+			return None
+		except Exception as e:
+			self._logger.log_error(f'{inspect.currentframe().f_code.co_name}: Problem adding campaign: {e}')
+			return None
+
 		##### Private Utility Methods #####
 
 	def _initialize_database_connection_pool(self, config:dict)->MySQLConnectionPool:
