@@ -61,8 +61,14 @@ class UserInterface(ApplicationBase):
                 print(f'\tInvalid choice: {menu_choice}. Try again.')
 
     def view_campaigns(self):
-        """Stub: will display all campaigns."""
-        print('view_campaigns() called...')
+        """Display all campaigns."""
+        campaigns = self.DB.get_campaigns()
+        if not campaigns:
+            print('\n\tNo campaigns found.')
+            return
+        print(f'\n\t--- Campaigns ({len(campaigns)}) ---')
+        for c in campaigns:
+            print(f'\t{c}')
 
     def add_campaign(self):
         """Stub: will prompt for and add a new campaign."""
