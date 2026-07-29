@@ -105,6 +105,28 @@ class MySQLPersistenceWrapper(ApplicationBase):
 			self._logger.log_error(f'{inspect.currentframe().f_code.co_name}: Problem adding campaign: {e}')
 			return None
 
+	def add_channel(self, name:str, type:str='other', status:str='active')->int:
+		"""Inserts a new channel row and returns the new channel_id."""
+		try:
+			self._logger.log_debug(f'{inspect.currentframe().f_code.co_name}: Adding channel {name}...')
+			connection = self._connection_pool.get_connection()
+			cursor = connection.cursor()
+			sql = 'INSERT INTO channel (name, type, status) VALUES (%s, %s, %s);'
+			values = (name, type, status)
+			cursor.execute(sql, values)
+			connection.commit()
+			new_id = cursor.lastrowid
+			cursor.close()
+			connection.close()
+			self._logger.log_debug(f'{inspect.currentframe().f_code.co_name}: Added channel_id {new_id}.')
+			return new_id
+		except connector.Error as err:
+			self._logger.log_error(f'{inspect.currentframe().f_code.co_name}: Problem adding channel: {err}')
+			return None
+		except Exception as e:
+			self._logger.log_error(f'{inspect.currentframe().f_code.co_name}: Problem adding channel: {e}')
+			return None
+
 		##### Private Utility Methods #####
 
 	def _initialize_database_connection_pool(self, config:dict)->MySQLConnectionPool:
