@@ -3,3 +3,4 @@ src/logs/
 src/app_settings.json
 __pycache__/
 *.pyc
+logs/
