@@ -28,9 +28,12 @@ Cross-reference table: `campaign_channel_xref`.
 
 - Python 3.12+
 - MySQL Server 8.0+
-- The `mysql-connector-python` package:
+- [Pipenv](https://pipenv.pypa.io) for dependency management
+
+Set up the virtual environment and install dependencies:
 ```bash
-  pip install mysql-connector-python
+pipenv --python 3.12
+pipenv install
 ```
 
 ## Database setup
@@ -70,7 +73,7 @@ from the defaults.
 From the project root:
 
 ```bash
-python src/main.py -c config/application_name_app_config.json
+pipenv run python src/main.py -c config/application_name_app_config.json
 ```
 
 ## Using the console menu
