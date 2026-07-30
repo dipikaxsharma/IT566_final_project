@@ -59,3 +59,11 @@ class AppServices(ApplicationBase):
                                spend:float=0.0, start_date=None)->int:
         """Links a channel to a campaign with an allocated spend, returns the new xref_id."""
         return self.DB.link_channel_to_campaign(campaign_id, channel_id, spend, start_date)
+
+    def get_campaign_summaries(self)->list:
+        """Returns raw campaign rows (with IDs) for display/selection purposes."""
+        return self.DB.get_all_campaigns()
+
+    def get_channel_summaries(self)->list:
+        """Returns raw channel rows (with IDs) for display/selection purposes."""
+        return self.DB.get_all_channels()

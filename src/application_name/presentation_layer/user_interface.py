@@ -115,5 +115,33 @@ class UserInterface(ApplicationBase):
             print('\tSomething went wrong adding the channel.')
 
     def link_channel_to_campaign(self):
-        """Stub: will link a channel to a campaign with a spend amount."""
-        print('link_channel_to_campaign() called...')
+        """Link a channel to a campaign with a spend amount."""
+        print('\n\t--- Link Channel to Campaign ---')
+        rows = self.DB.get_campaign_summaries()
+        if not rows:
+            print('\tNo campaigns exist yet. Add a campaign first.')
+            return
+        print('\tAvailable campaigns:')
+        for row in rows:
+            print(f"\t  {row['campaign_id']}: {row['name']}")
+        channel_rows = self.DB.get_channel_summaries()
+        if not channel_rows:
+            print('\tNo channels exist yet. Add a channel first.')
+            return
+        print('\tAvailable channels:')
+        for row in channel_rows:
+            print(f"\t  {row['channel_id']}: {row['name']}")
+        try:
+            campaign_id = int(input('\tCampaign ID: '))
+            channel_id = int(input('\tChannel ID: '))
+            spend = float(input('\tSpend allocated: '))
+        except Exception:
+            print('\tInvalid input entered, cancelling.')
+            return
+        start_date_str = input('\tStart date (YYYY-MM-DD), or leave blank: ')
+        start_date = date.fromisoformat(start_date_str) if start_date_str else None
+        new_id = self.DB.link_campaign_channel(campaign_id, channel_id, spend, start_date)
+        if new_id:
+            print(f'\tLinked successfully, xref_id {new_id}.')
+        else:
+            print('\tSomething went wrong linking the channel to the campaign.')
