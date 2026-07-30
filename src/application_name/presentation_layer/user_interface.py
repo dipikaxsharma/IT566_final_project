@@ -103,8 +103,16 @@ class UserInterface(ApplicationBase):
             print(f'\t{ch}')
 
     def add_channel(self):
-        """Stub: will prompt for and add a new channel."""
-        print('add_channel() called...')
+        """Prompt for and add a new channel."""
+        print('\n\t--- Add Channel ---')
+        name = input('\tChannel name: ')
+        type = input('\tType (social/search/email/video) [other]: ') or 'other'
+        status = input('\tStatus (active/inactive) [active]: ') or 'active'
+        new_id = self.DB.create_channel(name, type, status)
+        if new_id:
+            print(f'\tChannel added with channel_id {new_id}.')
+        else:
+            print('\tSomething went wrong adding the channel.')
 
     def link_channel_to_campaign(self):
         """Stub: will link a channel to a campaign with a spend amount."""
