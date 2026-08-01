@@ -151,6 +151,67 @@ class MySQLPersistenceWrapper(ApplicationBase):
 			self._logger.log_error(f'{inspect.currentframe().f_code.co_name}: Problem linking channel to campaign: {e}')
 			return None
 
+	def update_campaign(self, campaign_id:int, name:str, company:str, budget:float,
+					status:str, start_date=None, end_date=None)->bool:
+		"""Updates an existing campaign row. Returns True on success."""
+		try:
+			connection = self._connection_pool.get_connection()
+			cursor = connection.cursor()
+			sql = ('UPDATE campaign SET name=%s, company=%s, budget=%s, status=%s, '
+				   'start_date=%s, end_date=%s WHERE campaign_id=%s;')
+			values = (name, company, budget, status, start_date, end_date, campaign_id)
+			cursor.execute(sql, values)
+			connection.commit()
+			cursor.close()
+			connection.close()
+			return True
+		except Exception as e:
+			self._logger.log_error(f'{inspect.currentframe().f_code.co_name}: {e}')
+			return False
+
+	def delete_campaign(self, campaign_id:int)->bool:
+		"""Deletes a campaign row. Returns True on success."""
+		try:
+			connection = self._connection_pool.get_connection()
+			cursor = connection.cursor()
+			cursor.execute('DELETE FROM campaign WHERE campaign_id=%s;', (campaign_id,))
+			connection.commit()
+			cursor.close()
+			connection.close()
+			return True
+		except Exception as e:
+			self._logger.log_error(f'{inspect.currentframe().f_code.co_name}: {e}')
+			return False
+
+	def update_channel(self, channel_id:int, name:str, type:str, status:str)->bool:
+		"""Updates an existing channel row. Returns True on success."""
+		try:
+			connection = self._connection_pool.get_connection()
+			cursor = connection.cursor()
+			sql = 'UPDATE channel SET name=%s, type=%s, status=%s WHERE channel_id=%s;'
+			cursor.execute(sql, (name, type, status, channel_id))
+			connection.commit()
+			cursor.close()
+			connection.close()
+			return True
+		except Exception as e:
+			self._logger.log_error(f'{inspect.currentframe().f_code.co_name}: {e}')
+			return False
+
+	def delete_channel(self, channel_id:int)->bool:
+		"""Deletes a channel row. Returns True on success."""
+		try:
+			connection = self._connection_pool.get_connection()
+			cursor = connection.cursor()
+			cursor.execute('DELETE FROM channel WHERE channel_id=%s;', (channel_id,))
+			connection.commit()
+			cursor.close()
+			connection.close()
+			return True
+		except Exception as e:
+			self._logger.log_error(f'{inspect.currentframe().f_code.co_name}: {e}')
+			return False
+
 		##### Private Utility Methods #####
 
 	def _initialize_database_connection_pool(self, config:dict)->MySQLConnectionPool:

@@ -67,3 +67,19 @@ class AppServices(ApplicationBase):
     def get_channel_summaries(self)->list:
         """Returns raw channel rows (with IDs) for display/selection purposes."""
         return self.DB.get_all_channels()
+
+    def update_campaign(self, campaign_id, name, company, budget, status, start_date=None, end_date=None)->bool:
+        """Updates an existing campaign."""
+        return self.DB.update_campaign(campaign_id, name, company, budget, status, start_date, end_date)
+
+    def delete_campaign(self, campaign_id)->bool:
+        """Deletes a campaign."""
+        return self.DB.delete_campaign(campaign_id)
+
+    def update_channel(self, channel_id, name, type, status)->bool:
+        """Updates an existing channel."""
+        return self.DB.update_channel(channel_id, name, type, status)
+
+    def delete_channel(self, channel_id)->bool:
+        """Deletes a channel."""
+        return self.DB.delete_channel(channel_id)
