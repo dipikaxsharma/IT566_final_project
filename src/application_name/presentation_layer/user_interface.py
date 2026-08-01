@@ -35,7 +35,11 @@ class UserInterface(ApplicationBase):
         print('\t3. View Channels')
         print('\t4. Add Channel')
         print('\t5. Link Channel to Campaign')
-        print('\t6. Exit')
+        print('\t6. Update Campaign')
+        print('\t7. Delete Campaign')
+        print('\t8. Update Channel')
+        print('\t9. Delete Channel')
+        print('\t10. Exit')
 
     def process_menu_choice(self):
         """Read the user's menu choice and dispatch to the matching method."""
@@ -43,7 +47,7 @@ class UserInterface(ApplicationBase):
         if not user_input:
             print('\tNo input entered, try again.')
             return
-        menu_choice = user_input[0]
+        menu_choice = user_input.strip()
         match menu_choice:
             case '1':
                 self.view_campaigns()
@@ -56,6 +60,14 @@ class UserInterface(ApplicationBase):
             case '5':
                 self.link_channel_to_campaign()
             case '6':
+                self.update_campaign_ui()
+            case '7':
+                self.delete_campaign_ui()
+            case '8':
+                self.update_channel_ui()
+            case '9':
+                self.delete_channel_ui()
+            case '10':
                 print('\n\tGoodbye!')
                 exit()
             case _:
@@ -145,3 +157,58 @@ class UserInterface(ApplicationBase):
             print(f'\tLinked successfully, xref_id {new_id}.')
         else:
             print('\tSomething went wrong linking the channel to the campaign.')
+
+    def update_campaign_ui(self):
+        """Prompt for and update an existing campaign."""
+        for row in self.DB.get_campaign_summaries():
+            print(f"\t  {row['campaign_id']}: {row['name']}")
+        try:
+            cid = int(input('\tCampaign ID to update: '))
+            name = input('\tNew name: ')
+            company = input('\tNew company: ')
+            budget = float(input('\tNew budget: '))
+            status = input('\tNew status: ')
+        except Exception:
+            print('\tInvalid input, cancelling.')
+            return
+        ok = self.DB.update_campaign(cid, name, company, budget, status)
+        print('\tUpdated.' if ok else '\tSomething went wrong.')
+
+    def delete_campaign_ui(self):
+        """Prompt for and delete a campaign."""
+        for row in self.DB.get_campaign_summaries():
+            print(f"\t  {row['campaign_id']}: {row['name']}")
+        try:
+            cid = int(input('\tCampaign ID to delete: '))
+        except Exception:
+            print('\tInvalid input, cancelling.')
+            return
+        ok = self.DB.delete_campaign(cid)
+        print('\tDeleted.' if ok else '\tSomething went wrong.')
+
+    def update_channel_ui(self):
+        """Prompt for and update an existing channel."""
+        for row in self.DB.get_channel_summaries():
+            print(f"\t  {row['channel_id']}: {row['name']}")
+        try:
+            chid = int(input('\tChannel ID to update: '))
+            name = input('\tNew name: ')
+            type = input('\tNew type: ')
+            status = input('\tNew status: ')
+        except Exception:
+            print('\tInvalid input, cancelling.')
+            return
+        ok = self.DB.update_channel(chid, name, type, status)
+        print('\tUpdated.' if ok else '\tSomething went wrong.')
+
+    def delete_channel_ui(self):
+        """Prompt for and delete a channel."""
+        for row in self.DB.get_channel_summaries():
+            print(f"\t  {row['channel_id']}: {row['name']}")
+        try:
+            chid = int(input('\tChannel ID to delete: '))
+        except Exception:
+            print('\tInvalid input, cancelling.')
+            return
+        ok = self.DB.delete_channel(chid)
+        print('\tDeleted.' if ok else '\tSomething went wrong.')
